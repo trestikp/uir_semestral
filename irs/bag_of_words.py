@@ -21,7 +21,7 @@ def create_classes(class_file):
 	classes = {}
 	f = open(class_file, "r")
 	for line in f.readlines():
-		classes[line.strip()] = []		
+		classes[line.strip()] = [0, 0, []]
 	f.close()
 	return classes
 
@@ -29,7 +29,7 @@ def create_classes_vectors(classes_file, files, vocabulary):
 	classes = create_classes(classes_file)
 	counter = 0
 	for c in classes:
-		classes[c] = np.zeros(len(vocabulary), dtype = int)
+		classes[c][2] = np.zeros(len(vocabulary), dtype = int)
 	for f in files:
 		lines = open(f, "r", encoding='utf-8-sig').readlines()
 		for an in extract_annotations(lines[0]):
@@ -38,8 +38,10 @@ def create_classes_vectors(classes_file, files, vocabulary):
 			#if len(an) == 4:
 			#	an = an[1:]
 			if an.strip() in classes:
+				classes[an][0] += 1
 				for w in extract_words(lines[2]):
-					classes[an][vocabulary.index(w)] += 1
+					classes[an][2][vocabulary.index(w)] += 1
+					classes[an][1] += 1
 			else: 
 				print(f"Unknown annotation: {an}")
 				counter += 1
@@ -47,14 +49,10 @@ def create_classes_vectors(classes_file, files, vocabulary):
 	return classes
 
 if __name__ == "__main__":
-	annotations = "fin pol arm poc"
-	article = "Ahoj, jak se    dnes!!\" \n * vede?("
-	#print(extract_annotations(annotations))
-	#print(extract_words(article))
-	files = glob.glob("../data/Train/*.lab")
+	files = glob.glob("data/Train/*.lab")
 	v = create_vocabulary(files)
 	#print(len(v))
 
 	#print(classes)
-	classes = create_classes_vectors("../soubor_klas_trid.txt", files, v)
+	classes = create_classes_vectors("soubor_klas_trid.txt", files, v)
 	print(classes)
