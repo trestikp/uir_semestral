@@ -1,82 +1,51 @@
 import glob
-from multiprocessing import Pool
 
 import irs.bag_of_words as bow
 import classifiers.naive_bayes as nb
 
-def some_f():
-	overall_acc = 0
+"""
+def bow_create():
+	tf_set = []
+	training_files = glob.glob("data/Train/*.lab")
+	for f in training_files:
+		tf = open(f, "r", encoding="utf-8-sig")
+		lines = tf.readlines()
+		tf_set.append([bow.extract_annotations(lines[0]), bow.extract_words(lines[2])])
+		tf.close()
+	c_file = open("./soubor_klas_trid.txt", "r")
+	classes = bow.create_classes(c_file.readlines())
+	c_file.close()
+	#print(tf_set[1][0])
+	#print(tf_set[1][1])
+	return bow.create_classes_vectors(tf_set, classes, vocab)
+"""
+
+def nb_class():	
+	file_data_set = []
 	test_files = glob.glob("data/Test/*.lab")
 	for f in test_files:
-		test_file = open(f, "r")
-		lines = test_file.readlines()
-		art = bow.extract_words(lines[2])
-		res = nb.classify_file(art, vocab, classes)
-		blah = nb.get_classes(res)
-		annotations = bow.extract_annotations(lines[0])
-		curr_acc = 0
-		for annot in annotations:
-			if annot not in blah:
-				curr_acc += 1
-		for bla in blah:
-			if bla not in annotations:
-				curr_acc += 1
-		res_acc = curr_acc / (len(annotations) + len(blah))
-		res_acc = 1 - res_acc
-		print(f"Is: {annotations}  --  Classified: {blah}  --  Acc: {res_acc}")
-		overall_acc += res_acc
-		test_file.close()
-	overall_acc = overall_acc / len(test_files)
-	print(f"Total accuracy: {overall_acc}")
-
+		tf = open(f, "r", encoding="utf-8-sig")
+		lines = tf.readlines()
+		file_data_set.append([tf.name, bow.extract_annotations(lines[0]), bow.extract_words(lines[2])])
+		tf.close()
+	return nb.classify_file_set(file_data_set, vocab, classes)
 
 if __name__ == "__main__":
-	#naive_bayes.train(glob.glob("data/Train/*.lab"), "./soubor_klas_trid.txt")
 	vocab = bow.create_vocabulary(glob.glob("data/Train/*.lab"))
+	#vocab2 = bow.create_vocabulary(glob.glob("data/Test/*.lab"))
+	#vocab += vocab2
 	classes = bow.create_classes_vectors("./soubor_klas_trid.txt", glob.glob("data/Train/*.lab"), vocab)
-	for c in classes:
-		print(f"{c}  -   {classes[c]}") 
+	#classes = bow_create()
+	#for c in classes:
+	#	print(f"{c}  -   {classes[c]}") 
 
-	#p = Pool(processes=8)
-	#p.apply_async(some_f)
-	some_f()
+	nb_res = nb_class()
+	for n in nb_res:
+		#if n[0] == "data/Test/posel-od-cerchova-1873-01-11-n2_0080_4.lab":
+		#	for i in range(len(n[1])):
+		#		print(" ".join(hex(ord(n)) for n in n[1][i]))
+		#	for i in range(len(n[2])):
+		#		print(" ".join(hex(ord(n)) for n in n[2][i]))
+		print(n)
 
-
-	"""
-	overall_acc = 0
-	test_files = glob.glob("data/Test/*.lab")
-	for f in test_files:
-		test_file = open(f, "r")
-		lines = test_file.readlines()
-		art = bow.extract_words(lines[2])
-		res = nb.classify_file(art, vocab, classes)
-		blah = nb.get_classes(res)
-		annotations = bow.extract_annotations(lines[0])
-		curr_acc = 0
-		for annot in annotations:
-			if annot not in blah:
-				curr_acc += 1
-		for bla in blah:
-			if bla not in annotations:
-				curr_acc += 1
-		res_acc = curr_acc / (len(annotations) + len(blah))
-		res_acc = 1 - res_acc
-		print(f"Is: {annotations}  --  Classified: {blah}  --  Acc: {res_acc}")
-		overall_acc += res_acc
-		test_file.close()
-	overall_acc = overall_acc / len(test_files)
-	print(f"Total accuracy: {overall_acc}")
-	"""
-
-
-	#art = bow.extract_words(test_file.readlines()[2])
-
-	"""
-	res = nb.classify_file(art, vocab, classes)
-	print(res)
-	blah = nb.get_classes(res)
-	print(blah)
-	"""
-#	for f in res:
-		#print("{:.5f}".format(f))
-	#print("{:.10f}".format(res))
+	print(f"total acc: {nb.calculate_total_acc(nb_res)}")
