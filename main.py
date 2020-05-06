@@ -1,6 +1,7 @@
 import glob
 
 import irs.bag_of_words as bow
+import irs.bag_of_words2 as bow2
 import classifiers.naive_bayes as nb
 import irs.tfidf as tfidf
 
@@ -32,14 +33,20 @@ def nb_class():
 	return nb.classify_file_set(file_data_set, vocab, classes)
 
 if __name__ == "__main__":
-	vocab = bow.create_vocabulary(glob.glob("data/Train/*.lab"))
+#	vocab = bow.create_vocabulary(glob.glob("data/Train/*.lab"))
 	#vocab2 = bow.create_vocabulary(glob.glob("data/Test/*.lab"))
 	#vocab += vocab2
-	classes = bow.create_classes_vectors("./soubor_klas_trid.txt", glob.glob("data/Train/*.lab"), vocab)
+#	classes = bow.create_classes_vectors("./soubor_klas_trid.txt", glob.glob("data/Train/*.lab"), vocab)
 	#classes = bow_create()
 	#for c in classes:
 	#	print(f"{c}  -   {classes[c]}") 
 
+	bow_stuff = bow2.create_bow(glob.glob("data/Train/*.lab"), "./soubor_klas_trid.txt")
+	for bs in bow_stuff[0]:
+		for k, v in bs.items():
+			print(f"{k}  -  {v}")
+	
+	print(f"vocab len: {len(bow_stuff[1])}")
 	
 	#classes = tfidf.bow_tfidf(classes, len(vocab))
 	#print(tfidf.bow_tfidf(classes, len(vocab)))
@@ -50,7 +57,7 @@ if __name__ == "__main__":
 	#	for c in u[2]:
 	#		if c < 0:
 	#			print(c)
-
+"""
 	nb_res = nb_class()
 	for n in nb_res:
 		#if n[0] == "data/Test/posel-od-cerchova-1873-01-11-n2_0080_4.lab":
@@ -61,3 +68,4 @@ if __name__ == "__main__":
 		print(n)
 
 	print(f"total acc: {nb.calculate_total_acc(nb_res)}")
+"""
