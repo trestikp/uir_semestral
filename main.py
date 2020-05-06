@@ -2,6 +2,7 @@ import glob
 
 import irs.bag_of_words as bow
 import classifiers.naive_bayes as nb
+import irs.tfidf as tfidf
 
 """
 def bow_create():
@@ -38,6 +39,17 @@ if __name__ == "__main__":
 	#classes = bow_create()
 	#for c in classes:
 	#	print(f"{c}  -   {classes[c]}") 
+
+	
+	#classes = tfidf.bow_tfidf(classes, len(vocab))
+	#print(tfidf.bow_tfidf(classes, len(vocab)))
+	#for c in cls:
+	#	print(f"{c}  -   {cls[c]}") 
+
+	#for f, u in cls.items():
+	#	for c in u[2]:
+	#		if c < 0:
+	#			print(c)
 
 	nb_res = nb_class()
 	for n in nb_res:

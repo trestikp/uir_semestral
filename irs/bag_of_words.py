@@ -59,6 +59,7 @@ def create_classes_vectors(classes_file, files, vocabulary):
 	classes = create_classes(classes_file)
 	counter = 0
 	for c in classes:
+		#classes[c] = np.zeros(len(vocabulary), dtype=int)
 		classes[c][2] = np.zeros(len(vocabulary), dtype = int)
 	for f in files:
 		lines = open(f, "r", encoding='utf-8-sig').readlines()
@@ -68,8 +69,11 @@ def create_classes_vectors(classes_file, files, vocabulary):
 			#if len(an) == 4:
 			#	an = an[1:]
 			if an.strip() in classes:
+				#annot_count[an] += 1
 				classes[an][0] += 1
 				for w in extract_words(lines[2]):
+					#classes[an][vocabulary.index(w)] += 1
+					#annot_count[an] += 1
 					classes[an][2][vocabulary.index(w)] += 1
 					classes[an][1] += 1
 			else: 

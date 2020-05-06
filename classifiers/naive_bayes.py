@@ -8,34 +8,24 @@ def total_classes_usage(classes):
 		res += classes[c][0]
 	return res
 
-def compute_word_probability(vocabulary, classes, word, classs):
-	numerator  = classes[classs][2][vocabulary.index(word)] + 1
-	denominator = classes[classs][1] + len(vocabulary)
-	return numerator / denominator
-
 def compute_word_probability_s(vocabulary, word, classs):
+	m = 1
+	p = 0.1
 	try:
-		numerator  = classs[2][vocabulary.index(word)] + 1
+		numerator  = classs[2][vocabulary.index(word)] + (p * m)
 	except ValueError:
-		numerator = 1
-	denominator = classs[1] + len(vocabulary)
+		numerator = (p * m)
+	denominator = classs[1] + (m * len(vocabulary))
 	return numerator / denominator
-
-def compute_class_probablity(classes, classs, file_count):
-	return classes[classs][0] / file_count	
 
 def compute_class_probablity_s(classs, total_usage):
 	return classs[0] / total_usage
-
-def ccp(class_wc, voc_len):
-	return class_wc / voc_len
 
 def calculate_probabilities(parsed_file, vocabulary, classes):
 	results = {}
 	prob = 0
 	for c in classes:
-		#prob += math.log(compute_class_probablity_s(classes[c], total_classes_usage(classes)))
-		prob += math.log(ccp(classes[c][1], len(vocabulary)))
+		prob += math.log(compute_class_probablity_s(classes[c], total_classes_usage(classes)))
 		for word in parsed_file:
 			prob += math.log(compute_word_probability_s(vocabulary, word, classes[c]))
 		results[c] = prob
@@ -55,8 +45,8 @@ def classify_file(vocabulary, classes, file_data):
 	probs = calculate_probabilities(file_data[2], vocabulary, classes)
 	classification = get_classes(probs)
 	#accuracy = 1 - len(set(file_data[1]) | set(classification)) / (len(classification) + len(file_data[1]))
-	#accuracy = len(set(file_data[1]) & set(classification)) / len(set(classification) | set(file_data[1]))
-	accuracy = len(set(file_data[1]) & set(classification)) / len(classification)
+	accuracy = len(set(file_data[1]) & set(classification)) / len(set(classification) | set(file_data[1]))
+	#accuracy = len(set(file_data[1]) & set(classification)) / len(classification)
 	#if file_data[0] == "data/Test/posel-od-cerchova-1873-01-11-n2_0080_4.lab":
 	#	print(f"{len(set(file_data[1]) & set(classification))}/{(len(classification) | len(file_data[1]))}")
 	return [file_data[0], file_data[1], classification, accuracy]
