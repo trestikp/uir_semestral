@@ -52,13 +52,27 @@ def create_bigrams(training_set, classes_labels):
 	for lab in histograms[2]:
 		histograms[2][lab] = np.zeros(len(vocabulary), dtype=int)
 	for ts in training_set:
+		for lab in extract_annotations(ts[0]):
+			try:
+				histograms[0][lab] += 1
+				f_bis = extract_bigrams_from_corpus(extract_words(ts[2]))
+				histograms[1][lab] += len(f_bis)
+				for bi in f_bis:
+					histograms[2][lab][vocabulary.index(bi)] += f_bis[bi]
+			except KeyError:
+				fail_counter += 1
+	"""
+	for ts in training_set:
 		f_bis = extract_bigrams_from_corpus(extract_words(ts[2]))
 		for bi in f_bis:
 			for lab in extract_annotations(ts[0]):
 				try:
 					histograms[2][lab][vocabulary.index(bi)] += f_bis[bi]
+					histograms[0][lab] += 1
+					histograms[1][lab] += 1
 				except KeyError:
 					fail_counter += 1
+	"""
 	print(f"Failed bigram additions: {fail_counter}")
 	return [histograms, vocabulary]
 
