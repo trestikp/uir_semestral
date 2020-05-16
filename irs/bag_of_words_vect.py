@@ -5,19 +5,14 @@ import time
 from multiprocessing import Pool, cpu_count
 from functools import partial
 
-
-def extract_words(article):
-	article = re.sub("[^\w]", " ", article).split()
-	return [word.lower().strip() for word in article]
-
-def extract_annotations(line):
-	line = line.split()
-	return [l.strip() for l in line]
+from sys import path
+path.append("..")
+import utility
 
 def create_vocabulary(training_set):
 	vocabulary = set()
 	for ts in training_set:
-		vocabulary.update(extract_words(ts[2])) 
+		vocabulary.update(utility.extract_words(ts[2])) 
 	return sorted(tuple(vocabulary)) #tuple for indexes, sorted to keep indexes consistent
 
 """
@@ -40,14 +35,14 @@ def fill_classes_histograms(classes_file_content, training_set, vocabulary):
 	for k in histograms[2]:
 		histograms[2][k] = np.zeros(len(vocabulary), dtype = int)
 	for ts in training_set:
-		for an in extract_annotations(ts[0]):
+		for an in utility.extract_annotations(ts[0]):
 			# SOLVED: find out why some an is 4 long and strip nor replace doesn't work
 			# (0xff na prvnim indexu) --- NEED TO USE utf-8-sig ENCODING!!!
 			#if len(an) == 4:
 			#	an = an[1:]
 			if an.strip() in histograms[0]:
 				histograms[0][an] += 1
-				for w in extract_words(ts[2]):
+				for w in utility.extract_words(ts[2]):
 					#print(histograms[1][an])
 					histograms[2][an][vocabulary.index(w)] += 1
 					histograms[1][an] += 1

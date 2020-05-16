@@ -5,14 +5,9 @@ import time
 from multiprocessing import Pool, cpu_count
 from functools import partial
 
-
-def extract_words(article):
-	article = re.sub("[^\w]", " ", article).split()
-	return [word.lower().strip() for word in article]
-
-def extract_annotations(line):
-	line = line.split()
-	return [l.strip() for l in line]
+from sys import path
+path.append("..")
+import utility
 
 def extract_bigrams_from_corpus(parsed_file_data):
 	bigrams = {}
@@ -29,7 +24,7 @@ def extract_bigrams_from_corpus(parsed_file_data):
 def create_vocabulary(training_set):
 	vocab = set()
 	for ts in training_set:
-		vocab.update(extract_bigrams_from_corpus(extract_words(ts[2])))
+		vocab.update(extract_bigrams_from_corpus(utility.extract_words(ts[2])))
 	return sorted(tuple(vocab))
 """
 	[0] - count of labels of class in training data
@@ -52,10 +47,10 @@ def create_bigrams(training_set, classes_labels):
 	for lab in histograms[2]:
 		histograms[2][lab] = np.zeros(len(vocabulary), dtype=int)
 	for ts in training_set:
-		for lab in extract_annotations(ts[0]):
+		for lab in utility.extract_annotations(ts[0]):
 			try:
 				histograms[0][lab] += 1
-				f_bis = extract_bigrams_from_corpus(extract_words(ts[2]))
+				f_bis = extract_bigrams_from_corpus(utility.extract_words(ts[2]))
 				histograms[1][lab] += len(f_bis)
 				for bi in f_bis:
 					histograms[2][lab][vocabulary.index(bi)] += f_bis[bi]
@@ -82,11 +77,11 @@ def create_bigrams(classes_lables, training_set):
 	vocab_len = 0
 	histograms = create_histograms(classes_lables)
 	for t in training_set:
-		for an in extract_annotations(t[0]):
+		for an in utility.extract_annotations(t[0]):
 			#? TODO: testing for correct annotation?
 			# TODO: 2) if file is only 1 word long?
 			histograms[0][an] += 1
-			words = extract_words(t[2])
+			words = utility.extract_words(t[2])
 			if len(words) == 0:
 				continue
 			histograms[2][an][words[0]] = 1
