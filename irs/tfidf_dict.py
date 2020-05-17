@@ -1,7 +1,4 @@
 from math import log
-import numpy as np
-from multiprocessing import Pool, cpu_count
-from functools import partial
 
 def compute_idfs(c_dicts):
 	vocab = set()
@@ -13,11 +10,12 @@ def compute_idfs(c_dicts):
 			try:
 				vocab[w] += 1
 			except KeyError:
-				print("Word not in vocabulary. Skipping word...")
+				print(f"Word {w} is not in vocabulary. Skipping word...")
 	for w in vocab:
 		try:
 			vocab[w] = log((len(c_dicts)) / (float(vocab[w])))
 		except ZeroDivisionError:
+			#this is usually prevented by adding +1 to numerator
 			vocab[w] = 0
 	return vocab
 	
@@ -33,17 +31,17 @@ def calculate_tf_idf(model):
 			model[2][c][w] = tf * idfs[w]
 	return model
 
-def total_number_of_word(c_wcount):
+def total_number_of_words(c_wcount):
 	total = 0
 	for c in c_wcount:
 		total += c_wcount[c]
 	return total
 
 def normalize_tf_idf(model):
-	tot = total_number_of_word(model[1])
+	total = total_number_of_words(model[1])
 	for c in model[2]:
 		for w in model[2][c]:
-			model[2][c][w] = model[2][c][w] * tot
+			model[2][c][w] = model[2][c][w] * total
 	return model
 
 if __name__ == "__main__":

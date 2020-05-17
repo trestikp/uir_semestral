@@ -40,8 +40,8 @@ def calculate_probabilities(parsed_file, c_labels, c_wcount, c_vectors):
 	total_lc = total_label_count(c_labels)
 	vocab_len = calculate_vocab_length(c_vectors)
 	for c in c_vectors:
-		#class_prob = compute_class_probablity(c_wcount[c], total_lc)
-		class_prob = 22/105
+		class_prob = compute_class_probablity(c_wcount[c], total_lc)
+		#class_prob = 22/105
 		##class_prob = c_wcount[c] / len(vocabulary)
 		prob += log(class_prob)
 		for word in parsed_file:

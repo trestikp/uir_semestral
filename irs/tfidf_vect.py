@@ -1,71 +1,59 @@
 from math import log
 import numpy as np
-from multiprocessing import Pool, cpu_count
-from functools import partial
 
+def compute_idfs(c_vects):
+	vocab = []
+	vocab = np.zeros(len(c_vects[list(c_vects.keys())[0]]), dtype=int)
+	for c in c_vects:
+		for w in range(len(c_vects[c])):
+			if c_vects[c][w] > 0:
+				vocab[w] += 1
+	for w in vocab:
+		try:
+			vocab[w] = log(len(c_vects) / float(vocab[w]))
+		except ZeroDivisionError:
+			vocab[w] = 0
+	return vocab
+	"""
+	vocab = dict.fromkeys(vocabulary, 0)
+	for c in c_vects:
+		for w in vocabulary:
+			try:
+				if c_vects[vocabulary.index(w)] > 0:
+					print(vocab[w])
+					vocab[w] += 1
+			except KeyError:
+				vocab[w] = 1
+				#print(f"Word {w} is not in vocabulary. Skipping word...")
+	for w in vocab:
+		try:
+			vocab[w] = log(len(c_vects) / float(vocab[w]))
+		except ZeroDivisionError:
+			#this is usuallly prevented by +1 to numerator
+			vocab[w] = 0
+	return vocab
+	"""
 
-def classes_including_word_count(classes, w_index):
-	count = 0
-	for c in classes:
-		if classes[c][2][w_index] > 0:
-			count += 1
-	return count
+def compute_tf(word_count, class_wc):
+	return word_count / float(class_wc)
 
-def compute_cc_vector(classes, vocab_len):
-	pool = Pool(cpu_count())
-	res = pool.map(partial(classes_including_word_count, classes), range(vocab_len))
-	return res
+def calculate_tf_idf(model):
+	idfs = compute_idfs(model[2])
+	for c in model[2]:
+		for w in model[2][c]:
+			tf = compute_tf(model[2][c][w], model[1][c])
+			model[2][c][w] = tf * idfs[w]
+	return model
 
-def tfidf_one_class(classs, class_count, w_index, cc):
-	#print(classs)
-	new_class = [classs[0], classs[1], np.zeros(len(classs[2]))]
-	tf = classs[2][w_index] / float(classs[1])
-	idf = log(len(class_count) / (1 + float(cc)))
-	new_class[c][2][w_index] = tf * idf
-	return new_class
+def total_number_of_words(c_wcount):
+	total = 0
+	for c in c_wcount:
+		total += c_wcount[c]
+	return total
 
-
-
-def bow_tfidf(classes, vocab_len):
-	classes_new = {}
-	for c in classes:
-		classes_new[c] = [classes[c][0], classes[c][1], []]
-		classes_new[c][2] = np.zeros(vocab_len, dtype=int)
-	for w in range(vocab_len):
-		cc = classes_including_word_count(classes, w)
-		for c, val in classes.items():
-			tf = val[2][w] / float(val[1])
-			idf = log((len(classes) + 1) / (1 + float(cc)))
-			classes_new[c][2][w] = round(tf * idf * classes_new[c][1])
-			#classes_new[c][2][w] = round(tf * idf * vocab_len)
-#	for c, val in classes_new.items():
-#		for w in val[2]:
-#			w = round(w * vocab_len)
-		
-	return classes_new
-
-def bow_blabla(classes, vocab_len):
-	pool = Pool(cpu_count())
-	for w in range(vocab_len):
-		cc = classes_including_word_count(classes, w)
-		res = pool.map(partial(tfidf_one_class, class_count=len(classes), w_index=w, cc=cc), classes.values())
-	return res
-
-
-if __name__ == "__main__":
-	None
-"""
-	documentA = 'the man went out for a walk'
-	documentB = 'the children sat around the fire'
-	#vocab = ["Tohle", "je", "prvni", "priklad", "druhy"]
-	#str1 = ["Tohle", "je", "prvni", "priklad"]
-	#str2 = ["Tohle", "je", "druhy", "priklad", "priklad"]
-	str1 = documentA.split()
-	str2 = documentB.split()
-	vocab = sorted(list(set(str1) | set(str2)))
-	classes = {"pr1": [1, 7, [1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1]], "pr2": [1, 6, [0, 1, 1, 1, 0, 0, 0, 1, 2, 0, 0]]}
-
-	print(classes)
-	res = bow_tfidf(classes)
-	print(res)
-"""
+def normalize_tf_idf(model):
+	total = total_number_of_words(model[1])
+	for c in model[2]:
+		for w in model[2][c]:
+			model[2][c][w] = model[2][c][w] * total
+	return model
