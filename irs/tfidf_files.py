@@ -38,6 +38,7 @@ def calculate_tf_idf(model, file_count):
 			for w in d:
 				tf = compute_tf(d[w], model[1][c])
 				d[w] = tf * idfs[w]
+	#return [model, None]
 	return model
 
 def total_number_of_words(c_wcount):
@@ -52,6 +53,7 @@ def normalize_tf_idf(model):
 		for d in model[2][c]:
 			for w in d:
 				d[w] = d[w] * total
+	#return [model, None]
 	return model
 
 if __name__ == "__main__":

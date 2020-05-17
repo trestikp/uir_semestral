@@ -68,11 +68,11 @@ def unite_files(histograms):
 
 def create_bows_files(training_set, class_labels):
 	histograms = fill_classes_histograms(training_set, class_labels)
-	return [histograms, None]
+	return histograms
 
 def create_bows_vectors(training_set, class_labels):
 	histograms = unite_files(fill_classes_histograms(training_set, class_labels))
-	return [histograms, None]
+	return histograms
 
 if __name__ == "__main__":
 	print('This is BoW')

@@ -65,11 +65,11 @@ def unite_files(histograms):
 
 def create_bigrams_files(training_set, classes_labels):
 	histograms = fill_histograms(training_set, classes_labels)
-	return [histograms, None]
+	return histograms
 
 def create_bigrams_vectors(training_set, classes_labels):
 	histograms = unite_files(fill_histograms(training_set, classes_labels))
-	return [histograms, None]
+	return histograms
 
 
 if __name__ == "__main__":

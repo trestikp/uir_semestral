@@ -3,6 +3,8 @@ import glob
 import time
 from re import sub
 
+import json
+
 import utility
 
 import irs.bag_of_words_dict as bow_d
@@ -39,12 +41,21 @@ def create_model(training_files, class_label_file, method=0, classifier=0):
 	elif method == 2:
 		if classifier == 0:
 			mav = bow_final.create_bows_vectors(training_set, cl_data)
-			output = tfidf_d.normalize_tf_idf(tfidf_d.calculate_tf_idf(mav[0]))
+			#output = tfidf_d.normalize_tf_idf(tfidf_d.calculate_tf_idf(mav))
+			output = tfidf_d.calculate_tf_idf(mav)
 		elif classifier == 1:
 			mav = bow_final.create_bows_files(training_set, cl_data)
-			output = tfidf_f.normalize_tf_idf(tfidf_f.calculate_tf_idf(mav[0], len(training_set)))
+			#output = tfidf_f.normalize_tf_idf(tfidf_f.calculate_tf_idf(mav, len(training_set)))
+			output = tfidf_f.calculate_tf_idf(mav, len(training_set))
 
 	return output
+
+def save_model(model, file_name, classifier):
+	#JSONEncoder.encoding(self)
+	dump = json.dumps([classifier, model])
+	f = open(file_name, "w", encoding="utf-8-sig")
+	f.writelines(dump)
+	#print(dump)
 
 def extract_words_with_count(text):
 	text = utility.extract_words(text)
@@ -79,10 +90,9 @@ def nb_d_class(model, test_files):
 def knn_class(model, test_files):
 	test_set = prepare_test_set(test_files)
 	results = knn_f.classify_file_set(model[2], test_set)
-	#results = knn.classify_file_set(model[2], test_set)	
 	return results
 	
-def classify(vocabulary, model, test_files, classifier=0):
+def classify(model, test_files, classifier=0):
 	c_result = None
 	if classifier == 0:
 		c_result = nb_d_class(model, test_files)
@@ -94,9 +104,37 @@ def classify(vocabulary, model, test_files, classifier=0):
 def print_results(clas_results):
 	for res in clas_results:
 		print(res)
+	
+def run_gui(model_name):
+	f = open(model_name, "r", encoding="utf-8-sig")
+	dump = f.readline()
+	extraced = json.loads(dump)
+	model = extraced[1]
+	classifier = extraced[0]
+
+	c_results = classify(model, glob.glob("./data/Test/*.lab"), classifier)
+
+	if classifier == 0:
+		print(f"Total accuracy: {nb_d.calculate_total_acc(c_results):.2f}%")
+	elif classifier == 1:
+		print(f"Total accuracy: {knn_f.calculate_total_acc(c_results):.2f}%")
 
 def main():
 	parser = argparse.ArgumentParser(description="KIV/UIR semestral work")
+	subparsers = parser.add_subparsers(title="we", description="pokus", help="pls work")
+	console_parser = subparsers.add_parser("Console", help="blabla")
+	gui_parser = subparsers.add_parser("GUI", help="ASDASD")
+	console_parser.add_argument("classes_name_file", type=str, help="List of classes lables")
+	console_parser.add_argument("train_files", type=str, help="Training files")
+	console_parser.add_argument("test_files", type=str, help="Test files")
+	console_parser.add_argument("irs", type=str,
+		help="Choose information retrieval method: bow = Bag Of Words, bi = Bigram, bowtfidf = Bag Of Words + TF-IDF")
+	console_parser.add_argument("classifier", type=str, help="Choose classifier: nb = Naive Bayes, knn = k-Nearest Neighbors")
+	console_parser.add_argument("model_name", type=str, help="Model name")
+
+	gui_parser.add_argument("model_name", type=str, help="Model name")
+
+	"""
 	parser.add_argument("classes_name_file", type=str, help="List of classes lables")
 	parser.add_argument("train_files", type=str, help="Training files")
 	parser.add_argument("test_files", type=str, help="Test files")
@@ -104,8 +142,13 @@ def main():
 		help="Choose information retrieval method: bow = Bag Of Words, bi = Bigram, bowtfidf = Bag Of Words + TF-IDF")
 	parser.add_argument("classifier", type=str, help="Choose classifier: nb = Naive Bayes, knn = k-Nearest Neighbors")
 	parser.add_argument("model_name", type=str, help="Model name")
+	"""
 
 	args = parser.parse_args()
+
+	if len(vars(args)) == 1:
+		run_gui(args.model_name)
+		return
 
 	parametrization = 0
 	if args.irs == "bow":
@@ -114,15 +157,22 @@ def main():
 		parametrization = 1
 	elif args.irs == "bowtfidf":
 		parametrization = 2
+	else:
+		print("Urecognized parametrization option. Exiting...")
+		return
 	
 	classificator = 0
 	if args.classifier == "nb":
 		classificator = 0
 	elif args.classifier == "knn":
 		classificator = 1
+	else:
+		print("Unrecognized classificator option. Exiting...")
+		return
 
-	model_and_vocabulary = create_model(glob.glob(args.train_files+"/*.lab"), args.classes_name_file, parametrization, classificator)
-	c_results = classify(model_and_vocabulary[1], model_and_vocabulary[0], glob.glob(args.test_files+"/*.lab"), classificator)
+	model = create_model(glob.glob(args.train_files+"/*.lab"), args.classes_name_file, parametrization, classificator)
+	save_model(model, args.model_name, classificator)
+	c_results = classify(model, glob.glob(args.test_files+"/*.lab"), classificator)
 	print_results(c_results)
 	if classificator == 0:
 		print(f"Total accuracy: {nb_d.calculate_total_acc(c_results):.2f}%")
