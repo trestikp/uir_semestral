@@ -277,10 +277,77 @@ popsán v analýze úlohy.
 % Uživatelská dokumentace
 %
 \section{Uživatelská dokumentace}
+Program se spouští z konzole. Program je spustitelný na verzi Python
+2.x. Aby se rozlišilo jestli se program spouští v příkazové řádce
+nebo v GUI má 2 rozdílné zpracování argumentů. Proto je nutno 
+specifikovat, který použít formou argumentu.
+\subsection{Konzolový mód}
+Program se spustí následujícím způsobem: 
+\textbf{python main.py Console [-h] classes\_name\_file train\_files test\_files irs classifier model\_name}
+\begin{itemize}
+	\item \textbf{Console} -- argument specifikující, které zpracování argumentů
+		použít.
+	\item \textbf{[-h]} -- dobrovolný argument, při jehož použití se vypíše
+		nápověda k ostatním argumentům.
+	\item \textbf{classes\_name\_file} -- soubor s listem klasifikovaných tříd.
+		Jeden popisek třídy na každé řádce.
+	\item \textbf{train\_files} -- adresář obsahující soubory, ze kterých se 
+		vytvoří model klasifikátoru.
+	\item \textbf{test\_files} -- adresář obsahující soubory na kterých
+		se otestuje model klasifikátoru.
+	\item \textbf{irs} -- způsob vytváření příznaků:
+		\begin{itemize}
+			\item \textbf{bow} -- použije \texttt{Bag of Words}
+			\item \textbf{bi} -- použije \texttt{Bigram}
+			\item \textbf{bowtfidf} -- použije \texttt{Bag of Words
+				+ TF-IDF}
+		\end{itemize}
+	\item \textbf{classifier} -- který klasifikátor se použije s modelem:
+		\begin{itemize}
+			\item \textbf{nb} -- použije \texttt{Naive Bayes}
+			\item \textbf{knn} -- použije \texttt{k-nearest neighbors}
+		\end{itemize}
+	\item \textbf{model\_name} -- název souboru, do kterého se model uloží.
+\end{itemize}
+\subsection{GUI mód}
+\textbf{python main.py main.py GUI [-h] model\_name}
+\begin{itemize}
+	\item \textbf{GUI} -- argument specifikující, které zpracování argumentů
+		použít.
+	\item \textbf{[-h]} -- dobrovolný argument, při jehož použití se vypíše
+		nápověda k ostatním argumentům.
+	\item \textbf{model\_name} -- název souboru, ze kterého se načte model,
+		který se použije pro klasifikaci textu v grafickém rozhraní.
+\end{itemize}
 %
 % Výsledky
 %
 \section{Shrnutí výsledků}
+Všechny kombinace jsou zahrnuty v následující tabulce (viz Tabulka
+\ref{tab:results}).
+
+\begin{table}[H]
+        \begin{tabular}{| c | c | c | c |}
+                \hline
+                Příznaková metoda & Klasifikátor & Potřebný čas (v sec) & Přesnost\\
+                \hline
+			BoW & Naive Bayes &  & \% \\
+                \hline
+                Bigram & Naive Bayes &  & \% \\
+                \hline
+                Bow + TF-IDF & Naive Bayes &  & \% \\
+                \hline
+                BoW & k-nn &  & \% \\
+                \hline
+                Bigram & k-nn &  & \% \\
+                \hline
+                Bow + TF-IDF & k-nn &  & \% \\
+                \hline
+        \end{tabular}
+\caption{Tabulka výsledků}
+\label{tab:results}
+\end{table}
+
 %
 % Závěr
 %

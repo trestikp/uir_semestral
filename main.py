@@ -183,6 +183,10 @@ def main():
 		run_gui(args.model_name)
 		return
 
+	if len(vars(args)) <= 0:
+		print("No arguments given! Run with -h for help.")
+		return
+
 	parametrization = 0
 	if args.irs == "bow":
 		parametrization = 0
