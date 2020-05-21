@@ -64,7 +64,15 @@ def get_class(results):
 	#	if float(results[res]) > podminka:
 	#		new_res.append(res)
 	#res = next(iter(results))
-	return list(results.keys())[len(results) - 1]
+	#return list(results.keys())[len(results) - 1]
+	return list(results.keys())[-1]
+
+def classify_text_only(model, text):
+	#presuming text is parsed
+	prob = calculate_probabilities(text, model[0], model[1], model[2])
+	classification = get_class(prob)
+	return classification
+	
 
 def classify_file(model, file_data):
 	prob = calculate_probabilities(file_data[2], model[0], model[1], model[2])

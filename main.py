@@ -5,6 +5,9 @@ from re import sub
 
 import json
 
+#import tkinter
+from tkinter import *
+
 import utility
 
 import irs.bag_of_words_dict as bow_d
@@ -112,12 +115,42 @@ def run_gui(model_name):
 	model = extraced[1]
 	classifier = extraced[0]
 
-	c_results = classify(model, glob.glob("./data/Test/*.lab"), classifier)
+	#c_results = classify(model, glob.glob("./data/Test/*.lab"), classifier)
+	
+	master = Tk()
+	
+	enter_t = Label(master, text="Enter text you want to classify:")
+	enter_t.pack(fill=X)
 
+	input_t = Text(master)
+	input_t.pack(fill=X)
+	def callback():
+		text = input_t.get(1.0, END)
+		text = extract_words_with_count(text)
+		res = None
+		if classifier == 0:
+			res = nb_d.classify_text_only(model, text)
+		elif classifier == 1:
+			res = knn_f.classify_text_only(model[2],text)
+		res_var.set(f"Classified as: {res}")
+	
+	button = Button(master, text="Ok", command=callback)
+	button.pack()
+
+	res_var = StringVar()
+	res_var.set("This will change into classification result.")
+	result_t = Label(master, textvariable=res_var)
+	result_t.pack()
+
+	master.mainloop()
+
+
+	"""
 	if classifier == 0:
 		print(f"Total accuracy: {nb_d.calculate_total_acc(c_results):.2f}%")
 	elif classifier == 1:
 		print(f"Total accuracy: {knn_f.calculate_total_acc(c_results):.2f}%")
+	"""
 
 def main():
 	parser = argparse.ArgumentParser(description="KIV/UIR semestral work")

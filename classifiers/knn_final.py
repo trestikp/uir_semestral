@@ -101,20 +101,14 @@ def classify_file(c_vectors_f, file_data):
 	if classification in file_data[1]:
 		accuracy = 1
 	return [file_data[0], file_data[1], classification, accuracy]
-	"""
-	target = vectorize_text(file_data[2], vocabulary)
-	distances = calculate_distances(c_vectors, target)
-	classification = choose_classes(distances)
-	accuracy = 0
-	if classification in file_data[1]:
-		accuracy = 1
-	#results = choose_classes(distances)
-	#accuracy = len(set(file_data[1]) & set(results)) / len(set(results) | set(file_data[1]))
-	if file_data[0] == './data/Test/posel-od-cerchova-1874-02-14-n7_0175_0.lab':
-		for d in distances:
-			print(f"{d} - {distances[d]}")
-	return [file_data[0], file_data[1], classification, accuracy]
-	"""
+
+def classify_text_only(c_vectors_f, text):
+	#text is parse beforehand
+	target = dict_file(text)
+	distances = calculate_distances(c_vectors_f,target)
+	classification = choose_classification(distances)
+	return classification
+
 		
 def classify_file_set(c_vectors_f, file_data_set):
 	pool = Pool(int(cpu_count() * 3 / 4))
