@@ -21,17 +21,18 @@ def compute_word_probability(vocab_len, word_cnt, class_wc):
 	p = 0.0000000000000001# - cca 19.4 acc
 	#p = 0.000001 # cca 15.8 acc
 	#p = 0.5
-	try:
-		numerator = word_cnt + (p * m)
-	except ValueError:
-		numerator = (p * m)
-		#numerator = 0
-	#denominator = class_wc + (m * vocab_len)
-	denominator = class_wc + m
-	return numerator / denominator
+
+	#if word_cnt == 0:
+	#	return 0
+	numerator = word_cnt + (p * m)
+
+	denominator = class_wc + (m * vocab_len)
+
+	#denominator = class_wc + m
+	return log(numerator / denominator)
 
 def compute_class_probablity(class_cnt, total_usage):
-	return class_cnt / total_usage
+	return log(class_cnt / total_usage)
 
 def calculate_probabilities(parsed_file, c_labels, c_wcount, c_vectors):
 	results = {}
@@ -40,17 +41,19 @@ def calculate_probabilities(parsed_file, c_labels, c_wcount, c_vectors):
 	total_lc = total_label_count(c_labels)
 	vocab_len = calculate_vocab_length(c_vectors)
 	for c in c_vectors:
-		class_prob = compute_class_probablity(c_wcount[c], total_lc)
+		#class_prob = compute_class_probablity(c_wcount[c], total_lc)
 		#class_prob = 22/105
 		##class_prob = c_wcount[c] / len(vocabulary)
-		prob += log(class_prob)
+		prob += compute_class_probablity(c_labels[c], total_lc)
 		for word in parsed_file:
 			try:
-				prob += parsed_file[word] * log(compute_word_probability(vocab_len, c_vectors[c][word], c_wcount[c]))
+				#prob += parsed_file[word] * log(compute_word_probability(vocab_len, c_vectors[c][word], c_wcount[c]))
+				prob += parsed_file[word] * compute_word_probability(vocab_len, c_vectors[c][word], c_wcount[c])
 			except KeyError:
 				#prob += parsed_file[word] * log(compute_word_probability(vocab_len, 0, c_wcount[c]))
 				missing_wc += 1
-		prob += missing_wc * log(compute_word_probability(vocab_len, 0, c_wcount[c]))
+		#prob += missing_wc * log(compute_word_probability(vocab_len, 0, c_wcount[c]))
+		prob += missing_wc * compute_word_probability(vocab_len, 0, c_wcount[c])
 		results[c] = prob
 		prob = 0
 		missing_wc = 0
@@ -65,11 +68,13 @@ def get_class(results):
 	#		new_res.append(res)
 	#res = next(iter(results))
 	#return list(results.keys())[len(results) - 1]
+	#print(results)
 	return list(results.keys())[-1]
 
 def classify_text_only(model, text):
 	#presuming text is parsed
 	prob = calculate_probabilities(text, model[0], model[1], model[2])
+	#print({k: v for k, v in sorted(prob.items(), key=lambda item: item[1])})
 	classification = get_class(prob)
 	return classification
 	
@@ -83,15 +88,15 @@ def classify_file(model, file_data):
 	#accuracy = len(set(file_data[1]) & set(classification)) / len(set(classification) | set(file_data[1]))
 	#accuracy = len(set(file_data[1]) & set(classification)) / len(classification)
 	#if file_data[0] == "./data/Test/posel-od-cerchova-1873-01-11-n2_0080_4.lab":
-	#	probs = {k: v for k, v in sorted(probs.items(), key=lambda item: item[1])}
-	#	for p in probs:
-	#		print(f"{p} - {probs[p]}")
+	#if file_data[0] == "data/Test/posel-od-cerchova-1873-01-18-n3_0090_1.lab":
+	#	prob = {k: v for k, v in sorted(prob.items(), key=lambda item: item[1])}
+	#	for p in prob:
+	#		print(f"{p} - {prob[p]}")
 	#	print(f"{len(set(file_data[1]) & set(classification))}/{(len(classification) | len(file_data[1]))}")
 	return [file_data[0], file_data[1], classification, accuracy]
 
 def classify_file_set(model, test_set): 
 	pool = Pool(int(cpu_count() * 3 / 4))
-	#print(model)
 	class_res = pool.map(partial(classify_file, model), test_set)
 	return class_res
 

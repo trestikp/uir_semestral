@@ -210,6 +210,7 @@ def main():
 	model = create_model(glob.glob(args.train_files+"/*.lab"), args.classes_name_file, parametrization, classificator)
 	save_model(model, args.model_name, classificator)
 	c_results = classify(model, glob.glob(args.test_files+"/*.lab"), classificator)
+	#c_results = classify(model, glob.glob("posel-od-cerchova-1873-01-18-n3_0090_1.lab"), classificator)
 	print_results(c_results)
 	if classificator == 0:
 		print(f"Total accuracy: {nb_d.calculate_total_acc(c_results):.2f}%")
