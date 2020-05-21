@@ -1,16 +1,13 @@
 import argparse
 import glob
-import time
 from re import sub
 
 import json
 
-#import tkinter
 from tkinter import *
 
 import utility
 
-import irs.bag_of_words_dict as bow_d
 import classifiers.naive_bayes_dict as nb_d
 import irs.tfidf_dict as tfidf_d
 import irs.tfidf_files as tfidf_f
@@ -44,30 +41,26 @@ def create_model(training_files, class_label_file, method=0, classifier=0):
 	elif method == 2:
 		if classifier == 0:
 			mav = bow_final.create_bows_vectors(training_set, cl_data)
-			#output = tfidf_d.normalize_tf_idf(tfidf_d.calculate_tf_idf(mav))
-			output = tfidf_d.calculate_tf_idf(mav)
+			##output = tfidf_d.normalize_tf_idf(tfidf_d.calculate_tf_idf(mav))
+			#output = tfidf_d.calculate_tf_idf(mav)
+			output = tfidf_d.calculate_normalized_tf_idf(mav)
 		elif classifier == 1:
 			mav = bow_final.create_bows_files(training_set, cl_data)
-			#output = tfidf_f.normalize_tf_idf(tfidf_f.calculate_tf_idf(mav, len(training_set)))
-			output = tfidf_f.calculate_tf_idf(mav, len(training_set))
+			##output = tfidf_f.normalize_tf_idf(tfidf_f.calculate_tf_idf(mav, len(training_set)))
+			#output = tfidf_f.calculate_tf_idf(mav, len(training_set))
+			output = tfidf_f.calculate_normalized_tf_idf(mav, len(training_set))
 
 	return output
 
 def save_model(model, file_name, classifier):
-	#JSONEncoder.encoding(self)
 	dump = json.dumps([classifier, model])
 	f = open(file_name, "w", encoding="utf-8-sig")
 	f.writelines(dump)
-	#print(dump)
 
 def extract_words_with_count(text):
 	text = utility.extract_words(text)
-	#text = sub("[^\w]", " ", text).split()
 	result = {}
 	for w in text:
-		# kupodivu funguje lip bez nasledujici radky, aspon s nb + bow
-		# lepsi pro nb + bigram
-		#w = w.lower()
 		try:
 			result[w] += 1
 		except KeyError:
@@ -79,10 +72,8 @@ def prepare_test_set(test_files):
 	for f in test_files:
 		temp = open(f, "r", encoding="utf-8-sig")
 		lines = temp.readlines()
-		#test_set.append([temp.name, bow_v.extract_annotations(lines[0]), bow.extract_words(lines[2])])
 		test_set.append([temp.name, utility.extract_annotations(lines[0]), extract_words_with_count(lines[2])])
 		temp.close()
-	#print(test_set[0])
 	return test_set
 
 def nb_d_class(model, test_files):
@@ -114,8 +105,6 @@ def run_gui(model_name):
 	extraced = json.loads(dump)
 	model = extraced[1]
 	classifier = extraced[0]
-
-	#c_results = classify(model, glob.glob("./data/Test/*.lab"), classifier)
 	
 	master = Tk()
 	
@@ -145,13 +134,6 @@ def run_gui(model_name):
 	master.mainloop()
 
 
-	"""
-	if classifier == 0:
-		print(f"Total accuracy: {nb_d.calculate_total_acc(c_results):.2f}%")
-	elif classifier == 1:
-		print(f"Total accuracy: {knn_f.calculate_total_acc(c_results):.2f}%")
-	"""
-
 def main():
 	parser = argparse.ArgumentParser(description="KIV/UIR semestral work")
 	subparsers = parser.add_subparsers(title="we", description="pokus", help="pls work")
@@ -166,16 +148,6 @@ def main():
 	console_parser.add_argument("model_name", type=str, help="Model name")
 
 	gui_parser.add_argument("model_name", type=str, help="Model name")
-
-	"""
-	parser.add_argument("classes_name_file", type=str, help="List of classes lables")
-	parser.add_argument("train_files", type=str, help="Training files")
-	parser.add_argument("test_files", type=str, help="Test files")
-	parser.add_argument("irs", type=str,
-		help="Choose information retrieval method: bow = Bag Of Words, bi = Bigram, bowtfidf = Bag Of Words + TF-IDF")
-	parser.add_argument("classifier", type=str, help="Choose classifier: nb = Naive Bayes, knn = k-Nearest Neighbors")
-	parser.add_argument("model_name", type=str, help="Model name")
-	"""
 
 	args = parser.parse_args()
 
@@ -210,7 +182,6 @@ def main():
 	model = create_model(glob.glob(args.train_files+"/*.lab"), args.classes_name_file, parametrization, classificator)
 	save_model(model, args.model_name, classificator)
 	c_results = classify(model, glob.glob(args.test_files+"/*.lab"), classificator)
-	#c_results = classify(model, glob.glob("posel-od-cerchova-1873-01-18-n3_0090_1.lab"), classificator)
 	print_results(c_results)
 	if classificator == 0:
 		print(f"Total accuracy: {nb_d.calculate_total_acc(c_results):.2f}%")

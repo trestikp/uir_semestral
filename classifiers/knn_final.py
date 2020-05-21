@@ -6,10 +6,10 @@ from functools import partial
 
 def calculate_distances(c_vectors_f, target_dict):
 	distances = {}
+
 	for f in c_vectors_f:
 		dist_list = []
 		for d in c_vectors_f[f]:
-			#print(f"{f}  {d}\n")
 			dist = 0
 			vocab = d.keys() | target_dict.keys()
 			for w in vocab:
@@ -22,26 +22,21 @@ def calculate_distances(c_vectors_f, target_dict):
 				except KeyError:
 					y = 0
 				dist += ((x - y) * (x - y))
+
 			dist_list.append(sqrt(dist))
 		distances[f] = sorted(dist_list)
-	return distances
 
-	"""
-	for k, v in c_vectors.items():
-		for x in range(len(target_vect)):
-			dist += ((v[x] - target_vect[x]) * (v[x] - target_vect[x]))
-		distances[k] = sqrt(dist)
-		dist = 0
-	return {k: v for k, v in sorted(distances.items(), key=lambda item: item[1])}
-	"""
+	return distances
 
 def dict_file(parsed_file):
 	dictionary = {}
+
 	for w in parsed_file:
 		try:
 			dictionary[w] += 1
 		except KeyError:
 			dictionary[w] = 1
+
 	return dictionary
 
 def choose_class(result):
@@ -80,16 +75,16 @@ def choose_classification(distances):
 					key = d
 			except IndexError:
 				continue
+
 		result.append(key)
 		rounds += 1
 	
 	classification = choose_class(result)
+
 	if classification == True:
 		print("Could not determine class")
 		print(result)
 		return None
-
-	#print(f"{result}  chose {classification}")
 
 	return classification
 
@@ -98,12 +93,14 @@ def classify_file(c_vectors_f, file_data):
 	distances = calculate_distances(c_vectors_f,target)
 	classification = choose_classification(distances)
 	accuracy = 0
+
 	if classification in file_data[1]:
 		accuracy = 1
+
 	return [file_data[0], file_data[1], classification, accuracy]
 
 def classify_text_only(c_vectors_f, text):
-	#text is parse beforehand
+	#text is parsed beforehand
 	target = dict_file(text)
 	distances = calculate_distances(c_vectors_f,target)
 	classification = choose_classification(distances)

@@ -1,10 +1,3 @@
-import re
-import glob
-import numpy as np
-import time
-from multiprocessing import Pool, cpu_count
-from functools import partial
-
 from sys import path
 path.append("..")
 import utility
@@ -25,7 +18,7 @@ def create_histograms(classes_file_content):
 
 def file_to_dictionary(text):
 	result = {}
-	#stop-words?
+	# add stop-words?
 	for w in utility.extract_words(text):
 		try:
 			result[w] += 1

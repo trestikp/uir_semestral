@@ -31,6 +31,14 @@ def calculate_tf_idf(model):
 			model[2][c][w] = tf * idfs[w]
 	return model
 
+def calculate_normalized_tf_idf(model):
+	idfs = compute_idfs(model[2])
+	for c in model[2]:
+		for w in model[2][c]:
+			tf = compute_tf(model[2][c][w], model[1][c])
+			model[2][c][w] = tf * idfs[w] * model[2][c][w]
+	return model
+
 def total_number_of_words(c_wcount):
 	total = 0
 	for c in c_wcount:

@@ -72,7 +72,7 @@ termín 31.3.2020. Za dodržení termínu obdrží student bonus 10b.
 
 \item implementujte alespoň tři různé algoritmy (z přednášek i vlastní) pro tvorbu příznaků reprezentující textový dokument.
 
-\item implementujte alespoň dva různé klasifikační algoritmy (klasifikace s učitelem):
+\item implementujte alespoň dva různé klasifikační algoritmy (klasifikace\\ s učitelem):
         \begin{itemize}
         \item Naivní Bayesův klasifikátor
         \item klasifikátor dle vlastní volby
@@ -94,7 +94,7 @@ Poznámky:
 \item pro vlastní implementaci není potřeba čekat na dokončení anotace. Pro průběžné testování můžete použít korpus současné češtiny, který je k dispozici     na \url{http://ctdc.kiv.zcu.cz/} (uvažujte pouze první třídu dokumentu podle názvu, tedy např.
 dokument 05857 zdr ptr eur.txt náleží do třídy zdr“ - zdravotnictví).
 ”
-\item další informace, např. dokumentace nebo forma odevzdávání jsou k dispozici na CW pod záložkou Samostatná práce.
+\item další informace, např. dokumentace nebo forma odevzdávání jsou\,k dispozici na CW pod záložkou Samostatná práce.
 
 \end{itemize}
 %
@@ -106,9 +106,9 @@ dokument 05857 zdr ptr eur.txt náleží do třídy zdr“ - zdravotnictví).
 \subsection{Algoritmy pro tvorbu příznaků}
 Existuje řada metod získávání informací (modelů) z rozdílných typů dat.
 Pro tuto
-práci nás ale zajímájí pouze jazykové pravděpodobnostní modely. Ty se
+práci nás ale zajímají pouze jazykové pravděpodobnostní modely. Ty se
 řadí do několika tříd: unigram, n-gram, exponenciální, neuronové sítě
-a ostatní (takové, které nepřipadají do ani jedné z přechozích skupin).
+a ostatní (takové, které nepřipadají do ani jedné z předchozích skupin).\\
 Ve skutečnosti ale některé třídy jsou založeny na jiné třídě. Na
 příklad unigram je ve skutečnosti n-gram pro jednotlivá slova. Mezi
 nejvýznačnější reprezentanty patří \texttt{Bag of Words},
@@ -121,51 +121,50 @@ dokumenty
 jsou reprezentovány vektory o délce slovníku. Hodnoty vektorů jsou
 reprezentací četností výskytu slov v textu/ dokumentu pro každou
 klasifikační třídu (nebo jednotlivé dokumenty). Toto ovšem 
-vytváří problém, kdy při velké množině slov ve slovníku, se jich pouze
-malá část vyskytuje ve vektoru rezprezentující klasifikační třídu/
+vytváří problém, kdy při objemné množině slov ve slovníku, se jich pouze
+malá část vyskytuje ve vektoru reprezentující klasifikační třídu/
 dokument.
 
 Příklad \texttt{Bag of Words}\\
-Zdroj (Wikipedia): url \\
-\begin{figure}[H]
+Zdroj (Wikipedia): \url{https://en.wikipedia.org/wiki/Bag-of-words\_model} \\
+%\hrulefill\\
+\rule{\textwidth}{0.4pt}
 	\textbf{Texty}\\
 	\texttt{(1) John likes to watch movies. Mary likes movies too.}\\
 	\texttt{(2) Mary also likes to watch football games.}\\
 
 	\textbf{Rozdělení textů}\\
-	\texttt{BoW1 = \{"John":1,"likes":2,"to":1,"watch":1,"movies":2,"Mary":1,"too":1\};}\\
-	\texttt{BoW2 = \{"Mary":1,"also":1,"likes":1,"to":1,"watch":1,"football":1,"games":1\};}\\
+	\texttt{BoW1 = \{"John":1,"likes":2,"to":1,"watch":1,"movies":2,"Mary":1,\\"too":1\};}\\
+	\texttt{BoW2 = \{"Mary":1,"also":1,"likes":1,"to":1,"watch":1,"football":1,\\"games":1\};}\\
 
 	\textbf{Slovník textů}\\
-	\texttt{BoW3 = \{"John":1,"likes":3,"to":2,"watch":2,"movies":2,"Mary":2,"too":1,"also":1,"football":1,"games":1\};}\\
+	\texttt{BoW3 = \{"John":1,"likes":3,"to":2,"watch":2,\\"movies":2,"Mary":2,"too":1,"also":1,"football":1,"games":1\};}\\
 
+	%\pagebreak
 	\textbf{Vektory reprezentující texty}\\
 	\texttt{(1) [1, 2, 1, 1, 2, 1, 1, 0, 0, 0]}\\
-	\texttt{(2) [0, 1, 1, 1, 0, 1, 0, 1, 1, 1]}
-	%add caption and ref it 
-\end{figure}
+	\texttt{(2) [0, 1, 1, 1, 0, 1, 0, 1, 1, 1]}\\
+\rule{\textwidth}{0.4pt}
 \subsubsection{Bigram}
-Druhým alogritmem pro tvorbu příznaků bude \texttt{Bigram}. Ačkoliv 
+Druhým algoritmem pro tvorbu příznaků bude \texttt{Bigram}. Ačkoliv 
 \texttt{Bag of Words} je ve skutečnosti n-gram pro n = 1 a \texttt{Bigram}
 je n-gram pro n = 2 je v těchto algoritmech značný rozdíl. \texttt{Bigram}
 páruje slova a počítá pravděpodobnost páru jako podmíněnou pravděpodobnost
 obou slov páru.
 
-Párování slov je ukázáno na následujícím příkladu Ukázka \ref{fig:bigram_pairing}
-Pravděpodobnost výrazu je spočítána podle Vztahu \ref{fig:bigram_prob}.
-% replace for soemthing better then figure, border?
-\begin{figure}[H]
+Pravděpodobnost výrazu je spočítána podle vztahu na Obrázku
+\ref{fig:bigram_prob}.
+Párování slov je ukázáno na následujícím příkladu.\\
+\rule{\textwidth}{0.4pt}
 	\textbf{Věta}\\
 	\texttt{Tato věta je příklad.}\\
 
-	\textbf{Bigramy}\\
-	\texttt{bigrams = \{"S, Tato", "Tato, věta", "věta, je", "je, příklad", "příklad, /S\}}\\
+	\noindent\textbf{Bigramy}\\
+	\texttt{bigrams = \{"S, Tato", "Tato, věta", "věta, je", "je, příklad",\\ "příklad, /S\}}\\
 
-	S = začátek věty
-	/S = konec věty
-        \caption{Příklad párování slov}
-        \label{fig:bigram_pairing}
-\end{figure}
+	\noindent S = začátek věty,
+	/S = konec věty\\
+\rule{\textwidth}{0.4pt}
 \begin{figure}[H]
         \centering
         \includegraphics[]{img/bigram_prob.pdf}
@@ -174,24 +173,23 @@ Pravděpodobnost výrazu je spočítána podle Vztahu \ref{fig:bigram_prob}.
         \label{fig:bigram_prob}
 \end{figure}
 \subsubsection{TF-IDF}
-Posledním vybraným alogritmem je TF-IDF. Na rozdíl od ředchozích dvou
+Posledním vybraným algoritmem je TF-IDF. Na rozdíl od předchozích dvou
 vybraných algoritmů nevytváří příznaky z textu, ale upravuje již 
-existující příznaky. Tudíž je využíván spolu s \texttt{Bag of Words}.
+existující příznaky, tudíž je využíván spolu s \texttt{Bag of Words}.
 Algoritmus ohodnotí jednotlivá slova váhou místo jejich četností.
 Čím častěji se slovo v textech/ dokumentech vyskytuje, tím nižší váhu
 má po TF-IDF. Tento algoritmus svým způsobem "vytváří" takzvané 
 \textbf{stop words}. To jsou slova, které v jazyce pro klasifikaci
 nemají žádný význam (na příklad pro Český jazyk slova jako: a, pro, 
 nebo...).
-Přidat url na přiklad a jak počítat??
 %
 \subsection{Klasifikační algoritmy}
 Výběr klasifikačního algoritmu značně závisí na účelu našeho 
 projektu. Z mnoha klasifikátorů jako je \texttt{Naive Bayes},
-\texttt{Support Vector Machine (SVM)}, \texttt{Lineární regrese},
+\texttt{Support Vector Machine (SVM)}, \texttt{Linear regression},
 \texttt{Neural Networks} a dalších, potřebujeme vybrat podle potřeb.
 Nejdůležitějšími vlastnostmi klasifikátoru při výběru jsou jeho 
-přesnot (accuracy), složitost a rychlost.
+přesnost (accuracy), složitost a rychlost.
 \subsubsection{Naive Bayes}
 Je jeden z nejrychlejších a
 a nejjednodušších klasifikátorů. Jeho nedostatkem je, že potřebuje
@@ -208,20 +206,21 @@ vztahu (viz Obrázek \ref{fig:nb_class}).
         \label{fig:nb_class}
 \end{figure}
 \subsubsection{k-nearest neighbors}
-Převede klasifikovaný text/ dokument na vektor a spočítá vzdálenost ke 
-každému trénovacímu textu/ dokumentu. Poté přiřadí klasifikovanému
+Převede klasifikovaný text/ dokument na vektor a spočítá vzdálenost
+ke\,každému 
+trénovacímu textu/ dokumentu. Poté přiřadí klasifikovanému
 textu třídu, která má nejvíce zástupců v určité blízkosti. Tento
-algorimus je velmi jednoduchý a poměrně rychlý. Nevýhodou je přesnost,
+algoritmus je velmi jednoduchý a poměrně rychlý. Nevýhodou je přesnost,
 která pokud trénovací soubory nemají jednoznačně určenou třídu, není
 velmi vysoká.
 
-Příklad klasifikace zelené tečky na Obrázku \ref{fig:knn}. Zelená 
+Příklad klasifikace: zelená tečka na Obrázku \ref{fig:knn}. Zelená 
 tečka bude klasifikována jako červený trojúhelník, protože v okolí
-jsou 2 červené troujúhelníky a pouze 1 modrý čtverec.
+jsou 2 červené trojúhelníky a pouze 1 modrý čtverec.
 \begin{figure}[H]
         \centering
         \includegraphics[]{img/knn.png}
-        \caption{Příklad klasifikace knn}
+        \caption{Příklad klasifikace k-nn}
         Zdroj: \url{https://en.wikipedia.org/wiki/K-nearest\_neighbors\_algorithm}
         \label{fig:knn}
 \end{figure}
@@ -231,14 +230,14 @@ jsou 2 červené troujúhelníky a pouze 1 modrý čtverec.
 \section{Implementace}
 Pro tento projekt jsem zvolil jazyk Python. Důvodem bylo,
 že pro umělou inteligenci je pro Python množství knihoven.
-Naneštěstí jsem se k využítí žádné z knihoven nedostal.
+Naneštěstí jsem se k využití žádné z knihoven nedostal.
 \subsection{Bag of Words}
-Původně jsem tento model implementoval implementoval 
+Původně jsem tento model implementoval 
 použitím teoretického způsobu. Neboli vytvořil jsem 
 slovník a podle toho reprezentoval třídy jako vektory.
 Toto ale trvalo přibližně 15 vteřin.
 
-Nakonec jsem začal jednotlivé třidy reprezentovat pomocí
+Nakonec jsem začal jednotlivé třídy reprezentovat pomocí
 Python struktury \textbf{dictionary}. Tato struktura proces
 proces vytváření vektorů tříd urychlila na méně než vteřinu,
 ale není třeba dodržovat původní model a slovník není vůbec
@@ -250,24 +249,30 @@ Vytvářen velmi podobně jako \texttt{Bag of Words}, ale
 klíče slovníku jsou 2 slova oddělená mezerou.
 
 Má změna o proti teoretickému způsobu algoritmu je v
-počítání pravěpodobnosti. Stejně jako u \texttt{Bag of Words},
+počítání pravděpodobnosti. Stejně jako u \texttt{Bag of Words},
 jsou počítány pouze četnosti jednotlivých bigramů v textu.
 Pravděpodobnost je potom v klasifikátoru počítána jako 
 \texttt{počet četností/ počet bigramů ve třídě}, což není
 správný způsob počítání pravděpodobnosti bigramu.
-\subsection{TD-IDF}
+\subsection{TF-IDF}
 Provádí výpočty přesně jak má. Implementován tak, aby
 počítal nad strukturou \textbf{dictionary}.
+
+Navíc jsem se pokusil algoritmus doplnit o "normalizaci",
+se kterou lehce zvýší přesnost na poskytnutých datech.
+
+Je možné použít originální i mou "normalizovanou"
+metodu, ale musí se přepnout ve zdrojovém kódu.
 \subsection{Naive Bayes}
-Také pracuje nad strukturou \textbf{dictionary}. Z důvodu
-vélkého počtu slov ve třídách, čímž vznikaly pravěpodobnosti
-s příliš mnoho desetinnými místy pracuje v logaritmovém prostoru.
+Implementován pro práci nad strukturou \textbf{dictionary}. Z důvodu
+velkého počtu slov ve třídách, čímž vznikaly pravděpodobnosti
+s příliš mnoho desetinnými místy pracuje v logaritmovaném prostoru.
 Místo násobení pravděpodobností, sčítá logaritmy pravděpodobností.
 Také používá tak zvaný \textbf{Laplace smoothing}, díky čemuž
 i slova, která se ve třídě nevyskytují mají malý vliv na 
 klasifikaci místo nulového.
 \subsection{k-nearest neighbors}
-Pro tento algoritmus bylo třeba upravi příznakové metody, 
+Pro tento algoritmus bylo třeba upravit příznakové metody, 
 aby místo s jedním slovníkem definujícím třídu, vytvářely
 list souborů definující danou třídu.
 
@@ -278,9 +283,12 @@ popsán v analýze úlohy.
 %
 \section{Uživatelská dokumentace}
 Program se spouští z konzole. Program je spustitelný na verzi Python
-2.x. Aby se rozlišilo jestli se program spouští v příkazové řádce
+2.x. Program má Console mód a GUI mód. Console mód natrénuje 
+klasifikátor a klasifikuje testovací množinu. GUI mód otevře
+jednoduché GUI okno kam uživatel vloží text, který chce klasifikovat.
+Aby se rozlišilo jestli se program spouští v příkazové řádce
 nebo v GUI má 2 rozdílné zpracování argumentů. Proto je nutno 
-specifikovat, který použít formou argumentu.
+specifikovat, který použít, formou argumentu.
 \subsection{Konzolový mód}
 Program se spustí následujícím způsobem: 
 \textbf{python main.py Console [-h] classes\_name\_file train\_files test\_files irs classifier model\_name}
@@ -310,7 +318,7 @@ Program se spustí následujícím způsobem:
 	\item \textbf{model\_name} -- název souboru, do kterého se model uloží.
 \end{itemize}
 \subsection{GUI mód}
-\textbf{python main.py main.py GUI [-h] model\_name}
+Spuštění: \textbf{python main.py GUI [-h] model\_name}
 \begin{itemize}
 	\item \textbf{GUI} -- argument specifikující, které zpracování argumentů
 		použít.
@@ -327,30 +335,50 @@ Všechny kombinace jsou zahrnuty v následující tabulce (viz Tabulka
 \ref{tab:results}).
 
 \begin{table}[H]
-        \begin{tabular}{| c | c | c | c |}
+	\centering
+        \begin{tabular}{| c | c | c |}
                 \hline
-                Příznaková metoda & Klasifikátor & Potřebný čas (v sec) & Přesnost\\
+                Příznaková metoda & Klasifikátor & Přesnost\\
                 \hline
-			BoW & Naive Bayes &  & \% \\
+		BoW & Naive Bayes & 23.81\% \\
                 \hline
-                Bigram & Naive Bayes &  & \% \\
+                Bigram & Naive Bayes & 15.24\% \\
                 \hline
-                Bow + TF-IDF & Naive Bayes &  & \% \\
+                Bow + TF-IDF & Naive Bayes & 24.76\% \\
                 \hline
-                BoW & k-nn &  & \% \\
+                BoW & k-nn & 11.43\% \\
                 \hline
-                Bigram & k-nn &  & \% \\
+                Bigram & k-nn & 12.38\% \\
                 \hline
-                Bow + TF-IDF & k-nn &  & \% \\
+                Bow + TF-IDF & k-nn & 9.52\% \\
                 \hline
         \end{tabular}
 \caption{Tabulka výsledků}
 \label{tab:results}
 \end{table}
+První věcí, která je z výsledků zřejmá, je že žádná přesnost
+nedosahuje ani 30\%. Původně jsem očekával výsledky mezi 30\% 
+až 60\%. Bohužel těchto výsledků se nepodařilo dosáhnout.
+Hlavním důvodem proč jsou výsledky takto nepříznivě je pravděpodobně
+velká variace slov a fakt, že v programu nejsou použity žádné 
+\textbf{stop words}.
 
+Přesnost by se měla dát zvýšit přidáním \textbf{stop words}.
+Dalším způsobem zvýšení přesnosti by bylo ošetřit variaci slov.
+Slova z testovacích i trénovacích dat mají díky tomu, že jsou 
+skenována OCR, velké množství chyb. To by se\,dalo částečně vylepšit
+používáním pouze kořenů slov (tak zvaný \textbf{stemming}). Druhým
+způsobem by bylo použít \textbf{word2vec}, který ze slov udělá 
+vektory a\,dovolil by shlukovat vektory, které jsou si podobné.
 %
 % Závěr
 %
 \section{Závěr}
+Program bohužel nedává moc dobré výsledky a nepodařilo se úplně
+naplnit mé představy. Myslím si, že by program mohl dosáhnout lepších
+výsledků, při použití některé z metod popsaných v předchozí sekci.
+
+Dále by se program dal vylepšit úpravou implementací některých
+algoritmů.
 %
 \end{document}

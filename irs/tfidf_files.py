@@ -6,8 +6,6 @@ def compute_idfs(c_dict_f, file_count):
 	for c in c_dict_f:
 		#dict list
 		for d in c_dict_f[c]:
-			#print(d)
-			#print(c_dict_f[c])
 			vocab |= set(list(d.keys()))
 	vocab = dict.fromkeys(vocab, 0)
 	for c in c_dict_f:
@@ -20,7 +18,6 @@ def compute_idfs(c_dict_f, file_count):
 
 	for w in vocab:
 		try:
-			#print(f"{file_count} / {vocab[w]}")
 			vocab[w] = log(file_count) / (float(vocab[w]))
 		except ZeroDivisionError:
 			#this is usually prevented by adding +1 to numerator
@@ -31,6 +28,15 @@ def compute_idfs(c_dict_f, file_count):
 def compute_tf(word_count, class_wc):
 	return word_count / float(class_wc)
 
+def calculate_normalized_tf_idf(model, file_count):
+	idfs = compute_idfs(model[2], file_count)
+	for c in model[2]:
+		for d in model[2][c]:
+			for w in d:
+				tf = compute_tf(d[w], model[1][c])
+				d[w] = tf * idfs[w] * d[w]
+	return model
+
 def calculate_tf_idf(model, file_count):
 	idfs = compute_idfs(model[2], file_count)
 	for c in model[2]:
@@ -38,7 +44,6 @@ def calculate_tf_idf(model, file_count):
 			for w in d:
 				tf = compute_tf(d[w], model[1][c])
 				d[w] = tf * idfs[w]
-	#return [model, None]
 	return model
 
 def total_number_of_words(c_wcount):
