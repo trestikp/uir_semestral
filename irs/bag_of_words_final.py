@@ -16,6 +16,9 @@ def create_histograms(classes_file_content):
 		histograms[2][line.strip()] = []
 	return histograms
 
+"""
+Creates a dictionary with word counts from parsed file
+"""
 def file_to_dictionary(text):
 	result = {}
 	# add stop-words?
@@ -26,6 +29,9 @@ def file_to_dictionary(text):
 			result[w] = 1
 	return result
 
+"""
+Creates model
+"""
 def fill_classes_histograms(training_set, classes_file_content):
 	histograms = create_histograms(classes_file_content)
 	counter = 0
@@ -44,6 +50,9 @@ def fill_classes_histograms(training_set, classes_file_content):
 	print(f"Unrecognized annotations: {counter}")
 	return histograms
 
+"""
+Unites files in each class to a single vector
+"""
 def unite_files(histograms):
 	dictionary = {}
 	#c val fd   el
@@ -59,10 +68,16 @@ def unite_files(histograms):
 		dictionary = {}
 	return histograms
 
+"""
+Creates histograms without uniting files
+"""
 def create_bows_files(training_set, class_labels):
 	histograms = fill_classes_histograms(training_set, class_labels)
 	return histograms
 
+"""
+Creates histograms and unites files 
+"""
 def create_bows_vectors(training_set, class_labels):
 	histograms = unite_files(fill_classes_histograms(training_set, class_labels))
 	return histograms

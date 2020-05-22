@@ -4,6 +4,9 @@ from numpy import zeros
 from multiprocessing import Pool, cpu_count
 from functools import partial
 
+"""
+Calculate distances of a file to all other files
+"""
 def calculate_distances(c_vectors_f, target_dict):
 	distances = {}
 
@@ -39,6 +42,9 @@ def dict_file(parsed_file):
 
 	return dictionary
 
+"""
+Choose class from nearest neighbors
+"""
 def choose_class(result):
 	first = 0
 	second = 0
@@ -56,9 +62,10 @@ def choose_class(result):
 		return True
 	return res
 
-
-		
-
+"""
+Chooses nearest neighbors until result is found or 13 closest neighbors dont
+give a definiteve classification
+"""
 def choose_classification(distances):
 	classification = None
 	result = []
@@ -88,6 +95,9 @@ def choose_classification(distances):
 
 	return classification
 
+"""
+Classify one file
+"""
 def classify_file(c_vectors_f, file_data):
 	target = dict_file(file_data[2])
 	distances = calculate_distances(c_vectors_f,target)
@@ -99,6 +109,9 @@ def classify_file(c_vectors_f, file_data):
 
 	return [file_data[0], file_data[1], classification, accuracy]
 
+"""
+Classify GUI text
+"""
 def classify_text_only(c_vectors_f, text):
 	#text is parsed beforehand
 	target = dict_file(text)
@@ -106,12 +119,17 @@ def classify_text_only(c_vectors_f, text):
 	classification = choose_classification(distances)
 	return classification
 
-		
+"""
+Classify file set
+"""
 def classify_file_set(c_vectors_f, file_data_set):
 	pool = Pool(int(cpu_count() * 3 / 4))
 	class_res = pool.map(partial(classify_file, c_vectors_f), file_data_set)
 	return class_res
 
+"""
+Calculate total accuracy of the classifier
+"""
 def calculate_total_acc(class_res):
 	s = 0
 	for cr in class_res:

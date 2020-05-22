@@ -1,5 +1,8 @@
 from math import log
 
+"""
+Compute idfs
+"""
 def compute_idfs(c_dict_f, file_count):
 	vocab = set()
 	# labels
@@ -24,10 +27,15 @@ def compute_idfs(c_dict_f, file_count):
 			vocab[w] = 0
 	return vocab
 	
-
+"""
+Compute single tf
+"""
 def compute_tf(word_count, class_wc):
 	return word_count / float(class_wc)
 
+"""
+Creates tfidf and each tf-idf is multiplied by original word count
+"""
 def calculate_normalized_tf_idf(model, file_count):
 	idfs = compute_idfs(model[2], file_count)
 	for c in model[2]:
@@ -37,6 +45,9 @@ def calculate_normalized_tf_idf(model, file_count):
 				d[w] = tf * idfs[w] * d[w]
 	return model
 
+"""
+Creates tfidf in its defined form
+"""
 def calculate_tf_idf(model, file_count):
 	idfs = compute_idfs(model[2], file_count)
 	for c in model[2]:
@@ -46,12 +57,18 @@ def calculate_tf_idf(model, file_count):
 				d[w] = tf * idfs[w]
 	return model
 
+"""
+Gets total number of words in training set
+"""
 def total_number_of_words(c_wcount):
 	total = 0
 	for c in c_wcount:
 		total += c_wcount[c]
 	return total
 
+"""
+Multiply defined tfidf by the number of words in training set
+"""
 def normalize_tf_idf(model):
 	total = total_number_of_words(model[1])
 	for c in model[2]:

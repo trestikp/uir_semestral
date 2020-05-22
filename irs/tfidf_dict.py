@@ -1,3 +1,8 @@
+"""
+Pretty much copy of tfidf_files, but designed to work
+on a single dictionary instead of vector (dict) list
+"""
+
 from math import log
 
 def compute_idfs(c_dicts):

@@ -2,6 +2,9 @@ from sys import path
 path.append("..")
 import utility
 
+"""
+Extracts pairs from parsed file
+"""
 def extract_bigrams_from_file(parsed_file_data):
 	bigrams = {}
 	if len(parsed_file_data) > 0:
@@ -28,6 +31,9 @@ def create_histograms(classes_labels):
 		histograms[2][line.strip()] = []
 	return histograms
 
+"""
+Creates histograms and fills counts
+"""
 def fill_histograms(training_set, classes_labels):
 	fail_counter = 0
 	histograms = create_histograms(classes_labels)
@@ -43,6 +49,9 @@ def fill_histograms(training_set, classes_labels):
 	print(f"Failed bigram additions: {fail_counter}")
 	return histograms
 
+"""
+Unites files in histograms to a single vector
+"""
 def unite_files(histograms):
 	dictionary = {}
 	for c, val in histograms[2].items():
@@ -56,10 +65,16 @@ def unite_files(histograms):
 		dictionary = {}
 	return histograms
 
+"""
+Creates histograms without uniting files
+"""
 def create_bigrams_files(training_set, classes_labels):
 	histograms = fill_histograms(training_set, classes_labels)
 	return histograms
 
+"""
+Creates histograms and unites files to a single vector
+"""
 def create_bigrams_vectors(training_set, classes_labels):
 	histograms = unite_files(fill_histograms(training_set, classes_labels))
 	return histograms

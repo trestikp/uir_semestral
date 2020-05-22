@@ -17,6 +17,14 @@ import irs.bag_of_words_final as bow_final
 import irs.bigram_final as bi_f
 
 
+"""
+Creates model from training files.
+
+train_files - list of training file
+class_label_file - file with labels of classification classes
+method - which model to create
+classifier - for which classifier the model is
+"""
 def create_model(training_files, class_label_file, method=0, classifier=0):
 	training_set = []
 	for f in training_files:
@@ -28,16 +36,19 @@ def create_model(training_files, class_label_file, method=0, classifier=0):
 	cl_file.close()
 
 	output = None
+	#creates bow
 	if method == 0:
 		if classifier == 0:
 			output = bow_final.create_bows_vectors(training_set, cl_data)
 		elif classifier == 1:
 			output = bow_final.create_bows_files(training_set, cl_data)
+	#creates bigram
 	elif method == 1:
 		if classifier == 0:
 			output = bi_f.create_bigrams_vectors(training_set, cl_data)
 		elif classifier == 1:
 			output = bi_f.create_bigrams_files(training_set, cl_data)
+	#creates bow + tf-idf
 	elif method == 2:
 		if classifier == 0:
 			mav = bow_final.create_bows_vectors(training_set, cl_data)
@@ -52,11 +63,19 @@ def create_model(training_files, class_label_file, method=0, classifier=0):
 
 	return output
 
+"""
+Writes the model to file in JSON format
+"""
 def save_model(model, file_name, classifier):
 	dump = json.dumps([classifier, model])
 	f = open(file_name, "w", encoding="utf-8-sig")
 	f.writelines(dump)
 
+"""
+Creates a dictionary with word counts from text
+
+text - input text
+"""
 def extract_words_with_count(text):
 	text = utility.extract_words(text)
 	result = {}
@@ -67,6 +86,9 @@ def extract_words_with_count(text):
 			result[w] = 1
 	return result
 
+"""
+Creates test set
+"""
 def prepare_test_set(test_files):
 	test_set = []
 	for f in test_files:
